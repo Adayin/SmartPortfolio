@@ -28,7 +28,13 @@
       "Bash(npm run dev:*)",
       "Bash(npm run build:*)",
       "Bash(npx tsc:*)",
-      "Bash(d:/nodejs/bin/tsc --noEmit --force)"
+      "Bash(d:/nodejs/bin/tsc --noEmit --force)",
+      "Bash(git pull:*)",
+      "Bash(netstat:*)",
+      "Bash(grep:*)",
+      "Bash(taskkill:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
