@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(winget:*)",
+      "Bash(powershell.exe -Command \"Invoke-WebRequest -Uri ''https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi'' -OutFile ''$env:TEMP\\\\nodejs.msi''\")",
+      "Bash(npm --version:*)",
+      "Bash(powershell.exe -Command \"node --version; npm --version\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Program Files\\\\nodejs'' -ErrorAction SilentlyContinue | Select-Object Name\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Program Files \\(x86\\)\\\\nodejs'' -ErrorAction SilentlyContinue; Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\AppData\\\\Roaming\\\\npm'' -ErrorAction SilentlyContinue\")",
+      "Bash(powershell.exe -Command \"Get-WinGetPackage ''OpenJS.NodeJS.LTS'' -ErrorAction SilentlyContinue | Select-Object Id, Version, Status\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''$env:TEMP'' -Filter ''*.msi'' -ErrorAction SilentlyContinue | Where-Object { $_Name -like ''*node*'' } | Select-Object Name, Length, LastWriteTime\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''$HOME\\\\Downloads'' -Filter ''*node*'' | Select-Object Name, Length, LastWriteTime\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\Downloads'' -Filter ''*node*'' -ErrorAction SilentlyContinue | Select-Object Name, Length, LastWriteTime\")",
+      "Bash(powershell.exe -Command \"Start-Process ''C:\\\\Users\\\\sylvi\\\\Downloads\\\\node-v24.13.1-x64.msi'' -Wait\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\AppData\\\\Roaming\\\\npm'' -ErrorAction SilentlyContinue | Select-Object Name\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\AppData\\\\Local\\\\Programs'' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 20 FullName\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\AppData\\\\Local'' -Directory -Name | Select-String ''node''\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Program Files'' -Directory -Name | Select-String ''node'' -ErrorAction SilentlyContinue\")",
+      "Bash(powershell.exe -Command \"Start-Process ''C:\\\\Users\\\\sylvi\\\\Downloads\\\\node-v24.13.1-x64.msi'' -ArgumentList ''/quiet /norestart'' -Wait\")",
+      "Bash(powershell.exe -Command \"Start-Process msiexec.exe -ArgumentList ''/i \"\"C:\\\\Users\\\\sylvi\\\\Downloads\\\\node-v24.13.1-x64.msi\"\" /quiet INSTALLDIR=\"\"C:\\\\Users\\\\sylvi\\\\AppData\\\\Local\\\\Programs\\\\nodejs\"\" /norestart'' -Wait\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem ''C:\\\\Users\\\\sylvi\\\\AppData\\\\Local\\\\Programs\\\\nodejs'' -ErrorAction SilentlyContinue | Select-Object Name\")",
+      "Bash(/d/nodejs/node.exe:*)",
+      "Bash(/d/nodejs/npm.cmd --version)",
+      "Bash(/d/nodejs/npm.cmd install)",
+      "Bash(export:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(d:/nodejs/bin/tsc --noEmit --force)"
+    ]
+  }
+}
