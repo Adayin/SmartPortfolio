@@ -100,20 +100,30 @@ export function Analysis() {
   );
 
   const getOverallLevel = (deviation: number) => {
-    if (deviation <= 10) return { level: 'low', color: 'emerald-500', label: '低' };
-    if (deviation <= 20) return { level: 'medium', color: 'amber-500', label: '中' };
-    return { level: 'high', color: 'rose-500', label: '高' };
+    if (deviation <= 10) return { level: 'low', color: 'emerald-400', label: '低', emoji: '😊' };
+    if (deviation <= 20) return { level: 'medium', color: 'amber-400', label: '中', emoji: '😐' };
+    return { level: 'high', color: 'rose-400', label: '高', emoji: '😰' };
   };
 
   const overallLevel = getOverallLevel(overallDeviation);
 
+  const getStrategyEmoji = (strategyId: string) => {
+    switch (strategyId) {
+      case 'harry-browne': return '⚖️';
+      case 'all-weather': return '🌤';
+      case 'golden-balance': return '🥇';
+      case 'custom': return '🎯';
+      default: return '🎯';
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto min-h-screen bg-gray-950">
       {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 bg-gray-900 border-b border-gray-800">
+      <header className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-850 border-b border-gray-800">
         <Link to="/">
-          <button className="p-1 text-gray-400 hover:text-gray-100 transition-colors">
-            <ArrowLeft size={20} />
+          <button className="p-2 text-gray-400 hover:text-gray-100 transition-colors rounded-xl hover:bg-gray-800/50">
+            <span className="text-xl">←</span>
           </button>
         </Link>
 
@@ -123,14 +133,15 @@ export function Analysis() {
         <div className="relative">
           <button
             onClick={() => setShowStrategyDropdown(!showStrategyDropdown)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors"
+            className="flex items-center gap-3 px-4 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-2xl transition-all shadow-lg border border-gray-700/50"
           >
-            <span className="text-sm text-gray-100">{portfolio.currentStrategy.name}</span>
-            <ChevronDown size={16} className="text-gray-400" />
+            <span className="text-2xl">{getStrategyEmoji(portfolio.currentStrategy.id)}</span>
+            <span className="text-sm text-gray-100 font-medium">{portfolio.currentStrategy.name}</span>
+            <ChevronDown size={18} className="text-gray-400" />
           </button>
 
           {showStrategyDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 rounded-xl border border-gray-700 shadow-2xl z-50">
+            <div className="absolute top-full left-0 mt-2 w-72 bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl border border-gray-700 shadow-2xl z-50 overflow-hidden">
               {STRATEGIES.map((strategy) => (
                 <button
                   key={strategy.id}
@@ -138,14 +149,20 @@ export function Analysis() {
                     selectStrategy(strategy.id);
                     setShowStrategyDropdown(false);
                   }}
-                  className={`w-full text-left px-4 py-3 text-sm transition-colors ${
+                  className={`w-full text-left px-4 py-3 text-sm transition-all flex items-center gap-3 ${
                     strategy.id === portfolio.currentStrategy.id
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-700'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
+                      : 'text-gray-300 hover:bg-gray-700/50'
                   }`}
                 >
-                  <span className="block font-medium">{strategy.name}</span>
-                  <span className="block text-xs text-gray-500">{strategy.description}</span>
+                  <span className="text-xl">{getStrategyEmoji(strategy.id)}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="block font-medium">{strategy.name}</span>
+                    <span className="block text-xs text-gray-500">{strategy.description}</span>
+                  </div>
+                  {strategy.id === portfolio.currentStrategy.id && (
+                    <span className="text-sm">✅</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -155,17 +172,38 @@ export function Analysis() {
 
       <div className="px-4 py-4 pb-24">
         {/* 综合偏离度卡片 */}
-        <div className="bg-gray-800 rounded-2xl p-3 mb-4">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-3xl p-5 mb-4 shadow-lg border border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-gray-400">综合偏离度</h2>
-            <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${overallLevel.color}`}>
-              {overallDeviation.toFixed(2)}% - {overallLevel.label}
+            <h2 className="text-sm font-medium text-gray-400 flex items-center gap-2">
+              <span>🎯</span>
+              <span>综合偏离度</span>
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className={`px-4 py-2 rounded-2xl text-lg font-bold bg-${overallLevel.color}/20 text-${overallLevel.color}`}>
+                {overallDeviation.toFixed(2)}%
+              </span>
+              <span className="text-2xl">{overallLevel.emoji}</span>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            {overallLevel.level === 'low' && '✅ 配置合理'}
-            {overallLevel.level === 'medium' && '⚠️ 需要关注'}
-            {overallLevel.level === 'high' && '🔴 需要调仓'}
+          <p className="text-xs text-gray-500 mt-3 flex items-center gap-2">
+            {overallLevel.level === 'low' && (
+              <>
+                <span>✅</span>
+                <span>配置合理</span>
+              </>
+            )}
+            {overallLevel.level === 'medium' && (
+              <>
+                <span>⚠️</span>
+                <span>需要关注</span>
+              </>
+            )}
+            {overallLevel.level === 'high' && (
+              <>
+                <span>🔴</span>
+                <span>需要调仓</span>
+              </>
+            )}
           </p>
         </div>
 
@@ -177,10 +215,11 @@ export function Analysis() {
         <DeviationList deviations={actualDeviations} />
 
         {/* 固定底部按钮 */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 p-4 md:relative md:bg-transparent md:border-0 md:backdrop-blur-none md:p-0 md:mt-6">
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900/95 to-gray-900/95 backdrop-blur-sm border-t border-gray-800 p-4 md:relative md:bg-transparent md:border-0 md:backdrop-blur-none md:p-0 md:mt-6">
           <Link to="/rebalancing" className="block">
-            <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors">
-              查看调仓方案
+            <button className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
+              <span>⚖️</span>
+              <span>查看调仓方案</span>
             </button>
           </Link>
         </div>

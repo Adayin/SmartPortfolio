@@ -85,13 +85,16 @@ export function Rebalancing() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-gray-950">
       {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 bg-gray-900 border-b border-gray-800">
+      <header className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gray-900 to-gray-850 border-b border-gray-800">
         <Link to="/analysis">
-          <button className="p-1 text-gray-400 hover:text-gray-100 transition-colors">
-            <ArrowLeft size={20} />
+          <button className="p-2 text-gray-400 hover:text-gray-100 transition-colors rounded-xl hover:bg-gray-800/50">
+            <span className="text-xl">←</span>
           </button>
         </Link>
-        <h1 className="text-lg font-medium text-gray-100">调仓建议</h1>
+        <h1 className="text-lg font-medium text-gray-100 flex items-center gap-2">
+          <span>⚖️</span>
+          <span>调仓建议</span>
+        </h1>
       </header>
 
       <div className="px-4 py-4 pb-20">
@@ -116,9 +119,10 @@ export function Rebalancing() {
         {!showDisciplineCheck && (
           <button
             onClick={handleShowConfirm}
-            className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors"
+            className="w-full mt-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
           >
-            确认调仓
+            <span>✅</span>
+            <span>确认调仓</span>
           </button>
         )}
       </div>

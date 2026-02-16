@@ -8,23 +8,35 @@ export function AssetCard({ totalAssets, todayProfit, todayProfitPercent }: Asse
   const isPositive = todayProfit >= 0;
 
   return (
-    <div className="bg-gray-800 rounded-2xl p-4 mb-4">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-3xl p-5 mb-4 shadow-lg border border-gray-700/50">
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs text-gray-400 mb-1">总资产</p>
-          <p className="text-2xl font-bold text-gray-100">¥{totalAssets.toLocaleString()}</p>
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">💰</span>
+          <div>
+            <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+              <span>总资产</span>
+            </p>
+            <p className="text-3xl font-bold text-gray-100 tracking-tight">
+              ¥{totalAssets.toLocaleString()}
+            </p>
+          </div>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-400 mb-1">今日收益</p>
+          <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+            <span>今日收益</span>
+            <span>📊</span>
+          </p>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium ${isPositive ? 'text-emerald-500' : 'text-rose-500'}`}>
+            <span className={`text-base font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
               {isPositive ? '+' : ''}¥{Math.abs(todayProfit).toLocaleString()}
             </span>
             <span
-              className={`px-2 py-0.5 rounded text-xs font-medium ${
-                isPositive ? 'bg-emerald-500/20 text-emerald-500' : 'bg-rose-500/20 text-rose-500'
+              className={`px-3 py-1 rounded-full text-xs font-bold ${
+                isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
               }`}
             >
+              {isPositive ? '✅' : '⚠️'}
+              {' '}
               {isPositive ? '+' : ''}{todayProfitPercent.toFixed(2)}%
             </span>
           </div>
