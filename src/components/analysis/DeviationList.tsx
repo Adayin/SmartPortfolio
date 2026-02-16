@@ -34,7 +34,7 @@ export function DeviationList({ deviations }: DeviationListProps) {
           const indicator = getIndicator(deviation.level);
 
           return (
-            <div key={deviation.type} className="flex items-center justify-between p-3 bg-gray-850 rounded-xl">
+            <div key={deviation.type} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl">
               <div className="flex items-center gap-2">
                 <span className="text-base">{indicator.emoji}</span>
                 <div>

@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Asset } from '../../types/portfolio';
-import { Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit2, Trash2, ChevronDown, ChevronUp, ScanText } from 'lucide-react';
 
 interface AssetListProps {
   assets: Asset[];
   onAdd: () => void;
   onEdit: (asset: Asset) => void;
   onDelete: (id: string) => void;
+  onOCR: () => void;
 }
 
-export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
+export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListProps) {
   const [showAll, setShowAll] = useState(false);
   const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
   const displayAssets = showAll ? assets : assets.slice(0, 3);
@@ -18,13 +19,22 @@ export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-gray-400">持仓列表</h2>
-        <button
-          onClick={onAdd}
-          className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors text-sm"
-        >
-          <Plus size={16} />
-          <span>添加资产</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onOCR}
+            className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors text-sm"
+          >
+            <ScanText size={16} />
+            <span>OCR解析</span>
+          </button>
+          <button
+            onClick={onAdd}
+            className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors text-sm"
+          >
+            <Plus size={16} />
+            <span>添加资产</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-gray-800 rounded-2xl overflow-hidden">

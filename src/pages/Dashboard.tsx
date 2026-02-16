@@ -4,9 +4,11 @@ import { AssetCard } from '../components/dashboard/AssetCard';
 import { AssetList } from '../components/dashboard/AssetList';
 import { AssetForm } from '../components/dashboard/AssetForm';
 import { ProfitAttribution } from '../components/dashboard/ProfitAttribution';
+import { OCRParsingModal } from '../components/dashboard/OCRParsingModal';
 import { Modal } from '../components/common/Modal';
 import { useAssets } from '../hooks/useAssets';
 import { useToast } from '../components/common/Toast';
+import { parseOCRText, ParsedHolding } from '../utils/ocrParser';
 import type { Asset } from '../types/portfolio';
 
 export function Dashboard() {
@@ -23,6 +25,7 @@ export function Dashboard() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | undefined>();
+  const [showOCRModal, setShowOCRModal] = useState(false);
 
   const handleAddAsset = (assetData: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent' | 'targetRatio'>) => {
     if (editingAsset) {
@@ -53,6 +56,42 @@ export function Dashboard() {
     setEditingAsset(undefined);
   };
 
+  // 处理OCR解析
+  const handleOCRParse = (text: string): ParsedHolding[] => {
+    return parseOCRText(text);
+  };
+
+  // 处理OCR导入
+  const handleOCRImport = (holdings: ParsedHolding[]) => {
+    let importedCount = 0;
+
+    holdings.forEach((holding) => {
+      // 转换为Asset格式
+      // 类型映射: fund -> stock/bond/gold/cash (简化处理，fund默认为stock)
+      let assetType: 'stock' | 'bond' | 'gold' | 'cash' = 'stock';
+
+      // 根据名称简单推断类型
+      if (holding.name.includes('债') || holding.name.includes('BOND') || holding.name.includes('债券')) {
+        assetType = 'bond';
+      } else if (holding.name.includes('金') || holding.name.includes('GOLD') || holding.name.includes('黄金')) {
+        assetType = 'gold';
+      } else if (holding.name.includes('货币') || holding.name.includes('现金') || holding.name.includes('CASH')) {
+        assetType = 'cash';
+      }
+
+      addAsset({
+        name: holding.name,
+        symbol: holding.code || '',
+        value: holding.amount,
+        type: assetType,
+      });
+
+      importedCount++;
+    });
+
+    showToast(`成功导入 ${importedCount} 个持仓`, 'success');
+  };
+
   const todayProfitPercent = totalAssetsValue > 0 ? (totalProfit / totalAssetsValue) * 100 : 0;
 
   return (
@@ -70,6 +109,7 @@ export function Dashboard() {
           onAdd={() => setShowAddModal(true)}
           onEdit={handleEditAsset}
           onDelete={handleDeleteAsset}
+          onOCR={() => setShowOCRModal(true)}
         />
 
         {/* 收益归因分析 */}
@@ -90,6 +130,14 @@ export function Dashboard() {
           onCancel={handleCloseModal}
         />
       </Modal>
+
+      {/* OCR解析弹窗 */}
+      <OCRParsingModal
+        isOpen={showOCRModal}
+        onClose={() => setShowOCRModal(false)}
+        onParse={handleOCRParse}
+        onImport={handleOCRImport}
+      />
     </div>
   );
 }
