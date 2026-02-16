@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Asset } from '../../types/portfolio';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AssetListProps {
   assets: Asset[];
@@ -9,7 +10,9 @@ interface AssetListProps {
 }
 
 export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
+  const [showAll, setShowAll] = useState(false);
   const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
+  const displayAssets = showAll ? assets : assets.slice(0, 3);
 
   return (
     <div className="space-y-3">
@@ -25,7 +28,7 @@ export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
       </div>
 
       <div className="bg-gray-800 rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-[auto_1fr_auto] gap-3 p-3 text-xs font-medium text-gray-500 border-b border-gray-700">
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 p-3 text-xs font-medium text-gray-500 border-b border-gray-700">
           <span>名称</span>
           <span>类别</span>
           <span>金额</span>
@@ -33,10 +36,10 @@ export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
           <span className="text-right">操作</span>
         </div>
 
-        {assets.map((asset) => (
+        {displayAssets.map((asset) => (
           <div
             key={asset.id}
-            className="grid grid-cols-[auto_1fr_auto] gap-3 px-3 py-3 border-b border-gray-700/50 hover:bg-gray-700/50 transition-colors last:border-0"
+            className="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 px-3 py-3 border-b border-gray-700/50 hover:bg-gray-700/50 transition-colors last:border-0 items-center"
           >
             <span className="text-sm text-gray-200">{asset.name}</span>
             <span className="text-xs text-gray-400">
@@ -49,7 +52,7 @@ export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
             <span className="text-sm">
               {totalValue > 0 ? (
                 <span className={asset.profitPercent >= 0 ? 'text-emerald-500' : 'text-rose-500'}>
-                  {((asset.value / totalValue) * 100).toFixed(1)}%
+                  {((asset.value / totalValue) * 100).toFixed(2)}%
                 </span>
               ) : (
                 '0%'
@@ -75,9 +78,30 @@ export function AssetList({ assets, onAdd, onEdit, onDelete }: AssetListProps) {
         ))}
 
         {assets.length === 0 && (
-          <div className="py-12 text-center text-gray-500 text-sm">
-            暂无持仓数据，点击上方按钮添加资产
+          <div className="py-12 text-center">
+            <div className="mb-3 text-4xl">📊</div>
+            <p className="text-gray-500 text-sm mb-1">暂无持仓数据</p>
+            <p className="text-gray-600 text-xs">请点击上方按钮添加资产</p>
           </div>
+        )}
+
+        {assets.length > 3 && (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="w-full py-3 text-sm text-gray-400 hover:text-gray-200 flex items-center justify-center gap-2 transition-colors"
+          >
+            {showAll ? (
+              <>
+                <span>收起</span>
+                <ChevronUp size={16} />
+              </>
+            ) : (
+              <>
+                <span>展开更多 ({assets.length - 3})</span>
+                <ChevronDown size={16} />
+              </>
+            )}
+          </button>
         )}
       </div>
     </div>

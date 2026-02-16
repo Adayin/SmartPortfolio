@@ -3,8 +3,11 @@ import { TopBar } from '../components/layout/TopBar';
 import { AssetCard } from '../components/dashboard/AssetCard';
 import { AssetList } from '../components/dashboard/AssetList';
 import { AssetForm } from '../components/dashboard/AssetForm';
+import { ProfitAttribution } from '../components/dashboard/ProfitAttribution';
 import { Modal } from '../components/common/Modal';
 import { useAssets } from '../hooks/useAssets';
+import { useToast } from '../components/common/Toast';
+import type { Asset } from '../types/portfolio';
 
 export function Dashboard() {
   const {
@@ -16,14 +19,18 @@ export function Dashboard() {
     totalProfit,
   } = useAssets();
 
+  const { showToast } = useToast();
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | undefined>();
 
-  const handleAddAsset = (assetData: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent'>) => {
+  const handleAddAsset = (assetData: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent' | 'targetRatio'>) => {
     if (editingAsset) {
       updateAsset(editingAsset.id, assetData);
+      showToast('资产更新成功', 'success');
     } else {
       addAsset(assetData);
+      showToast('资产添加成功', 'success');
     }
     setShowAddModal(false);
     setEditingAsset(undefined);
@@ -37,6 +44,7 @@ export function Dashboard() {
   const handleDeleteAsset = (id: string) => {
     if (confirm('确定要删除这个资产吗？')) {
       deleteAsset(id);
+      showToast('资产删除成功', 'success');
     }
   };
 
@@ -50,7 +58,7 @@ export function Dashboard() {
   return (
     <div className="max-w-md mx-auto min-h-screen">
       <TopBar />
-      <div className="px-4 py-6 pb-20">
+      <div className="px-4 py-4 pb-20">
         <AssetCard
           totalAssets={totalAssetsValue}
           todayProfit={totalProfit}
@@ -63,6 +71,11 @@ export function Dashboard() {
           onEdit={handleEditAsset}
           onDelete={handleDeleteAsset}
         />
+
+        {/* 收益归因分析 */}
+        <div className="mt-4">
+          <ProfitAttribution assets={assets} />
+        </div>
       </div>
 
       {/* 添加/编辑资产弹窗 */}

@@ -56,24 +56,53 @@ export function useAssets() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // 确保解析结果是一个有效的数组
+        if (Array.isArray(parsed)) {
+          // 重新计算占比
+          const total = parsed.reduce((sum: number, a: Asset) => sum + a.value, 0);
+          return parsed.map((asset: Asset) => ({
+            ...asset,
+            currentRatio: total > 0 ? (asset.value / total) * 100 : 0,
+          }));
+        }
       }
     } catch {
       console.error('Failed to load assets from localStorage');
-      return DEFAULT_ASSETS;
     }
+    return DEFAULT_ASSETS;
   });
 
-  // 保存到 localStorage
+  // 计算总资产
+  const totalAssetsValue = assets.reduce((sum, asset) => sum + asset.value, 0);
+
+  // 重新计算所有资产的占比
+  const recalculateRatios = (assetList: Asset[]): Asset[] => {
+    const total = assetList.reduce((sum, asset) => sum + asset.value, 0);
+    return assetList.map(asset => ({
+      ...asset,
+      currentRatio: total > 0 ? (asset.value / total) * 100 : 0,
+    }));
+  };
+
+  // 保存到 localStorage 并重新计算占比
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
+      const assetsWithRatios = recalculateRatios(assets);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(assetsWithRatios));
+      // 如果占比发生变化，更新状态
+      const hasRatioChange = assets.some((asset, index) =>
+        Math.abs(asset.currentRatio - assetsWithRatios[index].currentRatio) > 0.01
+      );
+      if (hasRatioChange) {
+        setAssets(assetsWithRatios);
+      }
     } catch (error) {
       console.error('Failed to save assets to localStorage:', error);
     }
   }, [assets]);
 
-  const addAsset = (asset: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent'>) => {
+  const addAsset = (asset: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent' | 'targetRatio'>) => {
     const newAsset: Asset = {
       ...asset,
       id: Date.now().toString(),
@@ -82,21 +111,25 @@ export function useAssets() {
       profitPercent: 0,
       targetRatio: 0,
     };
-    setAssets([...assets, newAsset]);
+    const updatedAssets = recalculateRatios([...assets, newAsset]);
+    setAssets(updatedAssets);
   };
 
   const updateAsset = (id: string, updates: Partial<Asset>) => {
-    setAssets(assets.map((asset) =>
-      asset.id === id ? { ...asset, ...updates } : asset
-    ));
+    const updatedAssets = recalculateRatios(
+      assets.map((asset) =>
+        asset.id === id ? { ...asset, ...updates } : asset
+      )
+    );
+    setAssets(updatedAssets);
   };
 
   const deleteAsset = (id: string) => {
-    setAssets(assets.filter((asset) => asset.id !== id));
+    const updatedAssets = recalculateRatios(
+      assets.filter((asset) => asset.id !== id)
+    );
+    setAssets(updatedAssets);
   };
-
-  // 计算总资产
-  const totalAssetsValue = assets.reduce((sum, asset) => sum + asset.value, 0);
 
   // 计算今日收益（模拟）
   const totalProfit = assets.reduce((sum, asset) => sum + asset.profit, 0);

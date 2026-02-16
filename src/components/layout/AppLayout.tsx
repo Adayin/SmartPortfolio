@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { LayoutGrid, PieChart, TrendingUp } from 'lucide-react';
+import { LayoutGrid, PieChart, TrendingUp, History as HistoryIcon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 export function AppLayout({ children }: { children?: React.ReactNode }) {
@@ -9,14 +9,15 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
     { path: '/', label: '仪表盘', icon: LayoutGrid },
     { path: '/analysis', label: '分析', icon: PieChart },
     { path: '/rebalancing', label: '调仓', icon: TrendingUp },
+    { path: '/history', label: '历史', icon: HistoryIcon },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 pb-16 md:pb-0">
+    <div className="min-h-screen bg-gray-950 pb-20 md:pb-0">
       {children || <Outlet />}
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 md:relative">
+      {/* Bottom Navigation - 固定在底部 */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 z-40 md:relative">
         <div className="max-w-md mx-auto">
           <ul className="flex">
             {navItems.map((item) => {

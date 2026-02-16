@@ -1,19 +1,24 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { ToastProvider } from './components/common/Toast';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Analysis } from './pages/Analysis';
 import { Rebalancing } from './pages/Rebalancing';
+import { History } from './pages/History';
 
 function App() {
   return (
-    <AppLayout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/analysis" element={<Analysis />} />
-        <Route path="/rebalancing" element={<Rebalancing />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </AppLayout>
+    <ToastProvider>
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/rebalancing" element={<Rebalancing />} />
+          <Route path="/history" element={<History />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AppLayout>
+    </ToastProvider>
   );
 }
 

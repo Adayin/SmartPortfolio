@@ -1,27 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Asset } from '../../types/portfolio';
+import { NumberInput } from '../common/NumberInput';
 
 interface AssetFormProps {
   asset?: Asset;
-  onSave: (asset: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent'>) => void;
+  onSave: (asset: Omit<Asset, 'id' | 'currentRatio' | 'profit' | 'profitPercent' | 'targetRatio'>) => void;
   onCancel: () => void;
 }
 
 export function AssetForm({ asset, onSave, onCancel }: AssetFormProps) {
   const [name, setName] = useState(asset?.name || '');
   const [symbol, setSymbol] = useState(asset?.symbol || '');
-  const [value, setValue] = useState(asset?.value || 0);
+  const [value, setValue] = useState<number>(asset?.value || 0);
   const [type, setType] = useState<'stock' | 'bond' | 'gold' | 'cash'>(
     asset?.type || 'stock'
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !symbol || value <= 0) return;
+    if (!name.trim() || !symbol.trim() || value <= 0) {
+      alert('请填写完整的资产信息');
+      return;
+    }
 
     onSave({
-      name,
-      symbol,
+      name: name.trim(),
+      symbol: symbol.trim(),
       value,
       type,
     });
@@ -53,13 +57,11 @@ export function AssetForm({ asset, onSave, onCancel }: AssetFormProps) {
 
       <div>
         <label className="block text-sm font-medium text-gray-400 mb-2">持有金额（元）</label>
-        <input
-          type="number"
-          value={value || ''}
-          onChange={(e) => setValue(Number(e.target.value))}
-          placeholder="例如：10000"
-          min="0"
-          className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-gray-100 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+        <NumberInput
+          value={value}
+          onChange={setValue}
+          placeholder="例如：10,000"
+          min={0}
         />
       </div>
 

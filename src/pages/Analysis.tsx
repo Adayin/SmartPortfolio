@@ -32,7 +32,14 @@ export function Analysis() {
   };
 
   // 基于实际占比计算偏离度
-  const actualDeviations = portfolio.currentStrategy.allocations ? [
+  const actualDeviations: Array<{
+    type: 'stock' | 'bond' | 'gold' | 'cash';
+    name: string;
+    current: number;
+    target: number;
+    deviation: number;
+    level: 'low' | 'medium' | 'high';
+  }> = portfolio.currentStrategy.allocations ? [
     {
       type: 'stock',
       name: '股票',
@@ -146,13 +153,13 @@ export function Analysis() {
         </div>
       </header>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-4 pb-24">
         {/* 综合偏离度卡片 */}
-        <div className="bg-gray-800 rounded-2xl p-4 mb-6">
+        <div className="bg-gray-800 rounded-2xl p-3 mb-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-medium text-gray-400">综合偏离度</h2>
             <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${overallLevel.color}`}>
-              {overallDeviation.toFixed(1)}% - {overallLevel.label}
+              {overallDeviation.toFixed(2)}% - {overallLevel.label}
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-2">
@@ -169,11 +176,14 @@ export function Analysis() {
 
         <DeviationList deviations={actualDeviations} />
 
-        <Link to="/rebalancing" className="block">
-          <button className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors">
-            查看调仓方案
-          </button>
-        </Link>
+        {/* 固定底部按钮 */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 p-4 md:relative md:bg-transparent md:border-0 md:backdrop-blur-none md:p-0 md:mt-6">
+          <Link to="/rebalancing" className="block">
+            <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors">
+              查看调仓方案
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
