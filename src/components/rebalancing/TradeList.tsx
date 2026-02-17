@@ -48,7 +48,7 @@ export function TradeList({ trades }: TradeListProps) {
                 )}
                 {trade.currentProfit !== undefined && isSell && (
                   <p className="text-xs text-emerald-400 font-medium">
-                    当前盈亏 +{trade.currentProfit.toFixed(2)}%
+                    当前盈亏 +{trade.currentProfit.toFixed(1)}%
                   </p>
                 )}
               </div>

@@ -16,15 +16,15 @@ export function AllocationRadar({ currentAllocation, targetAllocation }: Allocat
   return (
     <div className="bg-gray-800 rounded-2xl p-4">
       <h2 className="text-sm font-medium text-gray-400 mb-2">资产配置对比</h2>
-      <div className="h-48">
+      <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={data}>
             <PolarGrid stroke="#374151" />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: '#9ca3af', fontSize: 11 }} />
+            <PolarAngleAxis dataKey="subject" tick={{ fill: '#9ca3af', fontSize: 13 }} />
             <PolarRadiusAxis
               angle={90}
               domain={[0, 60]}
-              tick={{ fill: '#6b7280', fontSize: 9 }}
+              tick={{ fill: '#6b7280', fontSize: 11 }}
               tickCount={4}
             />
             <Radar

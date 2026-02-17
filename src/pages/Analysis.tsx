@@ -1,16 +1,31 @@
-import { useState } from 'react';
-import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, ChevronDown, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useAssets } from '../hooks/useAssets';
 import { STRATEGIES } from '../utils/constants';
 import { AllocationRadar } from '../components/analysis/AllocationRadar';
 import { DeviationList } from '../components/analysis/DeviationList';
+import { CustomStrategyConfig } from '../components/analysis/CustomStrategyConfig';
+import { Strategy } from '../types/portfolio';
 
 export function Analysis() {
   const [showStrategyDropdown, setShowStrategyDropdown] = useState(false);
+  const [showCustomConfig, setShowCustomConfig] = useState(false);
+  const [customStrategies, setCustomStrategies] = useState<Record<string, Strategy>>({});
+
   const { portfolio, selectStrategy } = usePortfolio();
   const { assets } = useAssets();
+
+  // 获取当前策略（优先使用自定义）
+  const getCurrentStrategy = (): Strategy => {
+    if (portfolio.currentStrategy.id === 'custom' && customStrategies['custom']) {
+      return customStrategies['custom'];
+    }
+    return portfolio.currentStrategy;
+  };
+
+  const currentStrategy = getCurrentStrategy();
 
   // 根据实际持仓计算当前配置
   const actualAllocation = assets.reduce(
@@ -39,17 +54,17 @@ export function Analysis() {
     target: number;
     deviation: number;
     level: 'low' | 'medium' | 'high';
-  }> = portfolio.currentStrategy.allocations ? [
+  }> = currentStrategy.allocations ? [
     {
       type: 'stock',
       name: '股票',
       current: actualRatios.stock,
-      target: portfolio.currentStrategy.allocations.stock,
-      deviation: actualRatios.stock - portfolio.currentStrategy.allocations.stock,
+      target: currentStrategy.allocations.stock,
+      deviation: actualRatios.stock - currentStrategy.allocations.stock,
       level:
-        Math.abs(actualRatios.stock - portfolio.currentStrategy.allocations.stock) <= 5
+        Math.abs(actualRatios.stock - currentStrategy.allocations.stock) <= 5
           ? 'low'
-          : Math.abs(actualRatios.stock - portfolio.currentStrategy.allocations.stock) <= 15
+          : Math.abs(actualRatios.stock - currentStrategy.allocations.stock) <= 15
             ? 'medium'
             : 'high',
     },
@@ -57,12 +72,12 @@ export function Analysis() {
       type: 'bond',
       name: '债券',
       current: actualRatios.bond,
-      target: portfolio.currentStrategy.allocations.bond,
-      deviation: actualRatios.bond - portfolio.currentStrategy.allocations.bond,
+      target: currentStrategy.allocations.bond,
+      deviation: actualRatios.bond - currentStrategy.allocations.bond,
       level:
-        Math.abs(actualRatios.bond - portfolio.currentStrategy.allocations.bond) <= 5
+        Math.abs(actualRatios.bond - currentStrategy.allocations.bond) <= 5
           ? 'low'
-          : Math.abs(actualRatios.bond - portfolio.currentStrategy.allocations.bond) <= 15
+          : Math.abs(actualRatios.bond - currentStrategy.allocations.bond) <= 15
             ? 'medium'
             : 'high',
     },
@@ -70,12 +85,12 @@ export function Analysis() {
       type: 'gold',
       name: '黄金',
       current: actualRatios.gold,
-      target: portfolio.currentStrategy.allocations.gold,
-      deviation: actualRatios.gold - portfolio.currentStrategy.allocations.gold,
+      target: currentStrategy.allocations.gold,
+      deviation: actualRatios.gold - currentStrategy.allocations.gold,
       level:
-        Math.abs(actualRatios.gold - portfolio.currentStrategy.allocations.gold) <= 5
+        Math.abs(actualRatios.gold - currentStrategy.allocations.gold) <= 5
           ? 'low'
-          : Math.abs(actualRatios.gold - portfolio.currentStrategy.allocations.gold) <= 15
+          : Math.abs(actualRatios.gold - currentStrategy.allocations.gold) <= 15
             ? 'medium'
             : 'high',
     },
@@ -83,12 +98,12 @@ export function Analysis() {
       type: 'cash',
       name: '现金',
       current: actualRatios.cash,
-      target: portfolio.currentStrategy.allocations.cash,
-      deviation: actualRatios.cash - portfolio.currentStrategy.allocations.cash,
+      target: currentStrategy.allocations.cash,
+      deviation: actualRatios.cash - currentStrategy.allocations.cash,
       level:
-        Math.abs(actualRatios.cash - portfolio.currentStrategy.allocations.cash) <= 5
+        Math.abs(actualRatios.cash - currentStrategy.allocations.cash) <= 5
           ? 'low'
-          : Math.abs(actualRatios.cash - portfolio.currentStrategy.allocations.cash) <= 15
+          : Math.abs(actualRatios.cash - currentStrategy.allocations.cash) <= 15
             ? 'medium'
             : 'high',
     },
@@ -106,6 +121,29 @@ export function Analysis() {
   };
 
   const overallLevel = getOverallLevel(overallDeviation);
+
+  // 从 localStorage 加载自定义策略
+  useEffect(() => {
+    const saved = localStorage.getItem('customStrategies');
+    if (saved) {
+      try {
+        setCustomStrategies(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load custom strategies:', e);
+      }
+    }
+  }, []);
+
+  // 保存自定义策略到 localStorage
+  const handleSaveCustomStrategy = (strategy: Strategy) => {
+    const updated = {
+      ...customStrategies,
+      [strategy.id]: strategy,
+    };
+    setCustomStrategies(updated);
+    localStorage.setItem('customStrategies', JSON.stringify(updated));
+    selectStrategy(strategy.id);
+  };
 
   const getStrategyEmoji = (strategyId: string) => {
     switch (strategyId) {
@@ -130,18 +168,29 @@ export function Analysis() {
         <div className="flex-1"></div>
 
         {/* 策略选择器 */}
-        <div className="relative">
+        <div className="relative flex items-center gap-2">
           <button
             onClick={() => setShowStrategyDropdown(!showStrategyDropdown)}
-            className="flex items-center gap-3 px-4 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-2xl transition-all shadow-lg border border-gray-700/50"
+            className="flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all shadow-lg border border-gray-700/50"
           >
-            <span className="text-2xl">{getStrategyEmoji(portfolio.currentStrategy.id)}</span>
-            <span className="text-sm text-gray-100 font-medium">{portfolio.currentStrategy.name}</span>
-            <ChevronDown size={18} className="text-gray-400" />
+            <span className="text-lg">{getStrategyEmoji(portfolio.currentStrategy.id)}</span>
+            <span className="text-xs text-gray-100 font-medium truncate max-w-28">{currentStrategy.name}</span>
+            <ChevronDown size={14} className="text-gray-400 flex-shrink-0" />
           </button>
 
+          {/* 自定义策略设置按钮 */}
+          {portfolio.currentStrategy.id === 'custom' && (
+            <button
+              onClick={() => setShowCustomConfig(true)}
+              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all shadow-lg border border-gray-700/50 flex-shrink-0"
+              title="配置自定义策略"
+            >
+              <Settings size={16} className="text-gray-300" />
+            </button>
+          )}
+
           {showStrategyDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-72 bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl border border-gray-700 shadow-2xl z-50 overflow-hidden">
+            <div className="absolute top-full right-0 mt-2 w-56 bg-gradient-to-b from-gray-800 to-gray-850 rounded-xl border border-gray-700 shadow-2xl z-50 overflow-hidden">
               {STRATEGIES.map((strategy) => (
                 <button
                   key={strategy.id}
@@ -149,19 +198,19 @@ export function Analysis() {
                     selectStrategy(strategy.id);
                     setShowStrategyDropdown(false);
                   }}
-                  className={`w-full text-left px-4 py-3 text-sm transition-all flex items-center gap-3 ${
+                  className={`w-full text-left px-3 py-2.5 text-xs transition-all flex items-center gap-2 ${
                     strategy.id === portfolio.currentStrategy.id
                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
                       : 'text-gray-300 hover:bg-gray-700/50'
                   }`}
                 >
-                  <span className="text-xl">{getStrategyEmoji(strategy.id)}</span>
+                  <span className="text-base flex-shrink-0">{getStrategyEmoji(strategy.id)}</span>
                   <div className="flex-1 min-w-0">
-                    <span className="block font-medium">{strategy.name}</span>
-                    <span className="block text-xs text-gray-500">{strategy.description}</span>
+                    <span className="block font-medium truncate">{strategy.name}</span>
+                    <span className="block text-[10px] text-gray-400 truncate">{strategy.description}</span>
                   </div>
                   {strategy.id === portfolio.currentStrategy.id && (
-                    <span className="text-sm">✅</span>
+                    <span className="text-xs flex-shrink-0">✅</span>
                   )}
                 </button>
               ))}
@@ -174,15 +223,15 @@ export function Analysis() {
         {/* 综合偏离度卡片 */}
         <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-3xl p-5 mb-4 shadow-lg border border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-gray-400 flex items-center gap-2">
+            <h2 className="text-base font-medium text-gray-400 flex items-center gap-2">
               <span>🎯</span>
               <span>综合偏离度</span>
             </h2>
             <div className="flex items-center gap-2">
-              <span className={`px-4 py-2 rounded-2xl text-lg font-bold bg-${overallLevel.color}/20 text-${overallLevel.color}`}>
-                {overallDeviation.toFixed(2)}%
+              <span className={`px-4 py-2 rounded-2xl text-base font-bold bg-${overallLevel.color}/20 text-${overallLevel.color}`}>
+                {overallDeviation.toFixed(1)}%
               </span>
-              <span className="text-2xl">{overallLevel.emoji}</span>
+              <span className="text-xl">{overallLevel.emoji}</span>
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-3 flex items-center gap-2">
@@ -209,7 +258,7 @@ export function Analysis() {
 
         <AllocationRadar
           currentAllocation={actualRatios}
-          targetAllocation={portfolio.currentStrategy.allocations || { stock: 0, bond: 0, gold: 0, cash: 0 }}
+          targetAllocation={currentStrategy.allocations || { stock: 0, bond: 0, gold: 0, cash: 0 }}
         />
 
         <DeviationList deviations={actualDeviations} />
@@ -224,6 +273,14 @@ export function Analysis() {
           </Link>
         </div>
       </div>
+
+      {/* 自定义策略配置弹窗 */}
+      <CustomStrategyConfig
+        isOpen={showCustomConfig}
+        onClose={() => setShowCustomConfig(false)}
+        onSave={handleSaveCustomStrategy}
+        currentStrategy={currentStrategy}
+      />
     </div>
   );
 }

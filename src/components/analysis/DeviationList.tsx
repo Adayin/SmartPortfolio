@@ -64,10 +64,10 @@ export function DeviationList({ deviations }: DeviationListProps) {
                     </div>
                     <p className="text-xs text-gray-500 flex items-center gap-1">
                       <span>当前</span>
-                      <span className="text-gray-300 font-semibold">{deviation.current.toFixed(2)}%</span>
+                      <span className="text-gray-300 font-semibold">{deviation.current.toFixed(1)}%</span>
                       <span>vs</span>
                       <span>目标</span>
-                      <span className="text-gray-300 font-semibold">{deviation.target.toFixed(2)}%</span>
+                      <span className="text-gray-300 font-semibold">{deviation.target.toFixed(1)}%</span>
                     </p>
                   </div>
                 </div>
@@ -76,7 +76,7 @@ export function DeviationList({ deviations }: DeviationListProps) {
                     <span>{deviationEmoji}</span>
                     <span>
                       {deviation.deviation > 0 ? '+' : ''}
-                      {deviation.deviation.toFixed(2)}%
+                      {deviation.deviation.toFixed(1)}%
                     </span>
                   </p>
                 </div>

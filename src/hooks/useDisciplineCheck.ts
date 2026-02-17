@@ -25,7 +25,7 @@ export function useDisciplineCheck() {
         warnings.push({
           type: 'chasing_high',
           level: 'warning',
-          message: `${asset.name} 近5日涨幅 ${asset.recent5DaysChange.toFixed(2)}%，可能存在追高风险`,
+          message: `${asset.name} 近5日涨幅 ${asset.recent5DaysChange.toFixed(1)}%，可能存在追高风险`,
           assetId: asset.id,
           assetName: asset.name,
         });
@@ -37,7 +37,7 @@ export function useDisciplineCheck() {
       warnings.push({
         type: 'profit_take',
         level: 'warning',
-        message: `${asset.name} 当前盈利 ${asset.profitPercent.toFixed(2)}%，建议先减仓一半锁定收益`,
+        message: `${asset.name} 当前盈利 ${asset.profitPercent.toFixed(1)}%，建议先减仓一半锁定收益`,
         assetId: asset.id,
         assetName: asset.name,
       });
@@ -49,7 +49,7 @@ export function useDisciplineCheck() {
         warnings.push({
           type: 'gold_rule',
           level: 'blocking',
-          message: `${asset.name} 近3日涨幅 ${asset.recent3DaysChange.toFixed(2)}%，建议考虑卖出而非买入`,
+          message: `${asset.name} 近3日涨幅 ${asset.recent3DaysChange.toFixed(1)}%，建议考虑卖出而非买入`,
           assetId: asset.id,
           assetName: asset.name,
         });

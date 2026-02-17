@@ -64,7 +64,7 @@ export function ProfitAttribution({ assets }: ProfitAttributionProps) {
                     }`}>
                       {isProfit ? '+' : ''}{formatAmount(asset.profit)}
                       <span className="text-xs ml-1 text-gray-500">
-                        ({isProfit ? '+' : ''}{asset.profitPercent.toFixed(2)}%)
+                        ({isProfit ? '+' : ''}{asset.profitPercent.toFixed(1)}%)
                       </span>
                     </span>
                   </div>

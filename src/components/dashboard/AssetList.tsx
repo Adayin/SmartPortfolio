@@ -26,20 +26,19 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
   };
 
   const getTypeLabel = (type: Asset['type']) => {
-    const emoji = getAssetEmoji(type);
     switch (type) {
-      case 'stock': return `${emoji} 股票`;
-      case 'bond': return `${emoji} 债券`;
-      case 'gold': return `${emoji} 黄金`;
-      case 'cash': return `${emoji} 现金`;
-      default: return `${emoji} 其他`;
+      case 'stock': return '股票';
+      case 'bond': return '债券';
+      case 'gold': return '黄金';
+      case 'cash': return '现金';
+      default: return '其他';
     }
   };
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-gray-400 flex items-center gap-2">
+        <h2 className="text-base font-medium text-gray-400 flex items-center gap-2">
           <span>📋</span>
           <span>持仓列表</span>
         </h2>
@@ -79,13 +78,11 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
             <span className="text-xs text-gray-400 font-medium">
               {getTypeLabel(asset.type)}
             </span>
-            <span className="text-sm text-gray-100 font-semibold">¥{asset.value.toLocaleString()}</span>
-            <span className="text-sm font-bold">
+            <span className="text-xs text-gray-100 font-semibold">¥{asset.value.toLocaleString()}</span>
+            <span className="text-xs font-bold">
               {totalValue > 0 ? (
                 <span className={asset.profitPercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
-                  {asset.profitPercent >= 0 ? '✅' : '⚠️'}
-                  {' '}
-                  {((asset.value / totalValue) * 100).toFixed(2)}%
+                  {((asset.value / totalValue) * 100).toFixed(1)}%
                 </span>
               ) : (
                 <span className="text-gray-500">0%</span>

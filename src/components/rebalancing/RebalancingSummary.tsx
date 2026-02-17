@@ -43,7 +43,7 @@ export function RebalancingSummary({ summary }: RebalancingSummaryProps) {
             <span className="text-2xl">✅</span>
           </div>
           <p className={`text-base font-bold text-${getDeviationColor(summary.maxDeviation)}`}>
-            {summary.maxDeviation.toFixed(2)}%
+            {summary.maxDeviation.toFixed(1)}%
           </p>
           <p className="text-xs text-gray-500 flex items-center gap-1">
             <span>调仓后偏离度</span>

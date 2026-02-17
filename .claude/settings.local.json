@@ -34,7 +34,13 @@
       "Bash(grep:*)",
       "Bash(taskkill:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(ollama:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(./venv/Scripts/activate)",
+      "Bash(./venv/Scripts/pip.exe:*)"
     ]
   }
 }
