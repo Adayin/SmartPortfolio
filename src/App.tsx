@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Analysis } from './pages/Analysis';
 import { Rebalancing } from './pages/Rebalancing';
 import { History } from './pages/History';
+import { Market } from './pages/Market';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/rebalancing" element={<Rebalancing />} />
           <Route path="/history" element={<History />} />
+          <Route path="/market" element={<Market />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppLayout>

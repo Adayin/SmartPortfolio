@@ -64,8 +64,8 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
         <div className="grid grid-cols-[2fr_1.5fr_1.5fr_auto] gap-2 px-4 py-3 text-sm font-medium text-gray-500 border-b border-gray-700/50 bg-gray-900/30 items-start">
           <span>名称</span>
           <span className="pl-8">类别</span>
-          <span className="pl-8">占比</span>
-          <span className="pl-8">操作</span>
+          <span className="pl-4">占比</span>
+          <span className="pl-2">操作</span>
         </div>
 
         {displayAssets.map((asset) => (
