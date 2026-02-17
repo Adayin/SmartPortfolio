@@ -318,8 +318,11 @@ export function Market() {
       }
     } catch (error) {
       console.warn(`获取 ${symbol} 失败:`, error.message);
+      // 使用模拟数据作为后备
+      data[key] = { ...baseData[key] };
+      data[key].price = addVolatility(data[key].price, 0.2);
+      data[key].change = addVolatility(data[key].change, 30);
     }
-    });
 
     await Promise.all(promises);
     return data;
@@ -352,11 +355,11 @@ export function Market() {
         const data = realData[symbol];
         if (data && data.trendData && data.trendData.length > 0) {
           generateTrendData(symbol, data.price, data.change);
-        const canvas = chartRefs.current[symbol];
-        if (canvas) {
-          drawTrendChart(canvas, data.trendData, data.change);
+          const canvas = chartRefs.current[symbol];
+          if (canvas) {
+            drawTrendChart(canvas, data.trendData, data.change);
+          }
         }
-      }
       });
 
     } catch (error) {
@@ -533,38 +536,24 @@ export function Market() {
                           </span>
                         </div>
 
-                        {hasData && (
-                          <div className={`text-sm font-bold px-3 py-1.5 rounded-lg ${
-                            isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                          }`}>
-                            {formatNumber(card.price, cardId === 'silver' ? 3 : 2)}
-                          </div>
-                        )}
                       </div>
 
+                      {/* Price Display */}
                       <div className="flex items-center justify-between gap-4 mb-4">
-                        <div className="price-container">
-                          {hasData ? (
-                            <>
-                              <div className="text-3xl font-bold text-gray-100">
-                                {formatNumber(card.price, cardId === 'silver' ? 3 : 2)}
-                              </div>
-                              <div className={`text-sm font-bold px-3 py-1.5 rounded-lg ${
-                                isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                              }`}>
-                                {card.change !== undefined ? formatChange(card.change, card.price) : '--'}
-                              </div>
-                            </>
-                          ) : (
-                            <div className="text-2xl font-bold text-gray-500">
-                              --
+                        {hasData ? (
+                          <>
+                            <div className="text-3xl font-bold text-gray-100">
+                              {formatNumber(card.price, cardId === 'silver' ? 3 : 2)}
                             </div>
-                          )}
-                        </div>
-
-                        {hasData && (
-                          <div className="text-xs text-gray-500">
-                            日高: {formatNumber(card.high, 2)} | 日低: {formatNumber(card.low, 2)}
+                            <div className={`text-sm font-bold px-3 py-1.5 rounded-lg ${
+                              isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                            }`}>
+                              {card.change !== undefined ? formatChange(card.change, card.price) : '--'}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-3xl font-bold text-gray-500">
+                            --
                           </div>
                         )}
                       </div>
@@ -629,7 +618,7 @@ export function Market() {
         <div className="text-center mt-4 text-xs text-gray-500">
           下次更新: 30秒后
         </div>
-        <div className="text-center mt-2 text-xs text-gray-400">
+        <div className="text-center mt-2 text-xs text-gray-500">
           <span className="inline-flex items-center gap-1">
             {isUsingRealData ? <span className="text-emerald-400">✅</span> : <span className="text-gray-400">⚠️</span>}
           </span>
@@ -640,7 +629,6 @@ export function Market() {
       {/* Footer */}
       <div className="text-center py-4 text-xs text-gray-500 bg-gradient-to-b from-gray-900 to-gray-850 border-t border-gray-800">
         <p>数据仅供参考，不构成投资建议</p>
-        <p className="mt-2 text-emerald-400">✅ 数据来源: 新浪财经 (实时数据)</p>
       </div>
     </div>
   );
