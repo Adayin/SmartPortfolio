@@ -61,11 +61,11 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
       </div>
 
       <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-3xl overflow-hidden shadow-lg border border-gray-700/50">
-        <div className="grid grid-cols-[3fr_1fr_1fr_auto] gap-2 px-4 py-3 text-sm font-medium text-gray-500 border-b border-gray-700/50 bg-gray-900/30 items-start">
+        <div className="grid grid-cols-[2fr_1.5fr_1.5fr_auto] gap-2 px-4 py-3 text-sm font-medium text-gray-500 border-b border-gray-700/50 bg-gray-900/30 items-start">
           <span>名称</span>
-          <span>类别</span>
-          <span>占比</span>
-          <span>操作</span>
+          <span className="pl-8">类别</span>
+          <span className="pl-8">占比</span>
+          <span className="pl-8">操作</span>
         </div>
 
         {displayAssets.map((asset) => (
