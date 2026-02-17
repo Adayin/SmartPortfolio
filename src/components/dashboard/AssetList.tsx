@@ -61,24 +61,25 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
       </div>
 
       <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-3xl overflow-hidden shadow-lg border border-gray-700/50">
-        <div className="grid grid-cols-[2fr_1.5fr_1.5fr_1fr_auto] gap-3 p-4 text-xs font-medium text-gray-500 border-b border-gray-700/50 bg-gray-900/30">
+        <div className="grid grid-cols-[3fr_1fr_1fr_auto] gap-2 px-4 py-3 text-sm font-medium text-gray-500 border-b border-gray-700/50 bg-gray-900/30 items-start">
           <span>名称</span>
           <span>类别</span>
-          <span>金额</span>
           <span>占比</span>
-          <span className="text-right">操作</span>
+          <span>操作</span>
         </div>
 
         {displayAssets.map((asset) => (
           <div
             key={asset.id}
-            className="grid grid-cols-[2fr_1.5fr_1.5fr_1fr_auto] gap-3 px-4 py-3 border-b border-gray-700/30 hover:bg-gradient-to-r hover:from-gray-700/30 hover:to-gray-700/20 transition-all last:border-0 items-center"
+            className="grid grid-cols-[3fr_1fr_1fr_auto] gap-2 px-4 py-3 border-b border-gray-700/30 hover:bg-gradient-to-r hover:from-gray-700/30 hover:to-gray-700/20 transition-all last:border-0 items-center"
           >
-            <span className="text-sm text-gray-200 font-medium truncate">{asset.name}</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-sm text-gray-200 font-medium truncate pr-2">{asset.name}</span>
+              <span className="text-[10px] text-gray-500 mt-0.5">¥{asset.value.toLocaleString()}</span>
+            </div>
             <span className="text-xs text-gray-400 font-medium">
               {getTypeLabel(asset.type)}
             </span>
-            <span className="text-xs text-gray-100 font-semibold">¥{asset.value.toLocaleString()}</span>
             <span className="text-xs font-bold">
               {totalValue > 0 ? (
                 <span className={asset.profitPercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
@@ -88,7 +89,7 @@ export function AssetList({ assets, onAdd, onEdit, onDelete, onOCR }: AssetListP
                 <span className="text-gray-500">0%</span>
               )}
             </span>
-            <div className="flex items-center gap-1 justify-end">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => onEdit(asset)}
                 className="p-2 text-gray-400 hover:text-amber-400 hover:scale-110 transition-all rounded-lg"
