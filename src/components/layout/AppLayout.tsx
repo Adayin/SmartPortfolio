@@ -6,6 +6,7 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
 
   const navItems = [
     { path: '/', label: '资产', emoji: '💰' },
+    { path: '/market', label: '市场', emoji: '🌏' },
     { path: '/analysis', label: '分析', emoji: '📊' },
     { path: '/rebalancing', label: '调仓', emoji: '⚖️' },
     { path: '/history', label: '历史', emoji: '📜' },

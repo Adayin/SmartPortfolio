@@ -3,9 +3,9 @@ import { ToastProvider } from './components/common/Toast';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Analysis } from './pages/Analysis';
+import Market from './pages/Market';
 import { Rebalancing } from './pages/Rebalancing';
 import { History } from './pages/History';
-import { Market } from './pages/Market';
 
 function App() {
   return (
@@ -14,9 +14,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/analysis" element={<Analysis />} />
+          <Route path="/market" element={<Market />} />
           <Route path="/rebalancing" element={<Rebalancing />} />
           <Route path="/history" element={<History />} />
-          <Route path="/market" element={<Market />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppLayout>
